@@ -23,6 +23,10 @@ class MyHomePage extends StatefulWidget {
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
+
+  static List<TabContent> getTabs(){
+    return _MyHomePageState.tabs.sublist(3);
+  }
 }
 
 class _MyHomePageState extends State<MyHomePage>
@@ -34,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   var _childList;
   var dio;
-  List<TabContent> tabs;
+  static List<TabContent> tabs;
 
   @override
   void initState() {
@@ -42,11 +46,11 @@ class _MyHomePageState extends State<MyHomePage>
 //    _childList = [new Home(), new Discover(), new Post(), new More()];
     _childList = [new Home(), new More()];
     dio = new Dio();
+    getTabs();
   }
 
   @override
   Widget build(BuildContext context) {
-    getTabs();
     return Scaffold(
       body: _childList[_selectedIndex <= 2 ? 0 : 1],
       bottomNavigationBar: BottomNavigationBar(
@@ -116,6 +120,7 @@ class _MyHomePageState extends State<MyHomePage>
     setState(() {
       _selectedIndex = index;
       if (_selectedIndex <= 2) {
+        Home.webUrl = tabs[_selectedIndex].url;
         var plugin = new FlutterWebviewPlugin();
         plugin.reloadUrl(tabs[_selectedIndex].url);
         print("url:${tabs[_selectedIndex].url}");
@@ -138,7 +143,8 @@ class _MyHomePageState extends State<MyHomePage>
     tabs = tabData.data;
     setState(() {
       if (_selectedIndex <= 2) {
-        Home.webUrl = tabs[_selectedIndex].url;
+        var plugin = new FlutterWebviewPlugin();
+        plugin.reloadUrl(tabs[_selectedIndex].url);
       }
 //      Discover.webUrl = tabs[1].url;
 //      Post.webUrl = tabs[2].url;
